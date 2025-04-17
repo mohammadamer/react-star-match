@@ -53,8 +53,8 @@ const PlayAgain: React.FC<PlayAgainProps> = ({ gameStatus, onClick }) => (
 
 // ✅ Game Hook (State Management)
 const useGameState = (timeLimit: number = 10) => {
-  const [stars, setStars] = useState(utils.random(1, 9));
-  const [availableNums, setAvailableNums] = useState<number[]>(utils.range(1, 9));
+  const [stars, setStars] = useState(() => utils.random(1, 9));
+  const [availableNums, setAvailableNums] = useState<number[]>(() => utils.range(1, 9));
   const [candidateNums, setCandidateNums] = useState<number[]>([]);
   const [secondsLeft, setSecondsLeft] = useState<number>(timeLimit);
 
@@ -66,13 +66,40 @@ const useGameState = (timeLimit: number = 10) => {
   }, [secondsLeft, availableNums]);
 
   const setGameState = (newCandidateNums: number[]) => {
-    if (utils.sum(newCandidateNums) !== stars) {
+    const candidateSum = utils.sum(newCandidateNums);
+    
+    if (candidateSum !== stars) {
       setCandidateNums(newCandidateNums);
     } else {
-      const newAvailableNums = availableNums.filter((n) => !newCandidateNums.includes(n));
-      setStars(utils.randomSumIn(newAvailableNums, 9));
-      setAvailableNums(newAvailableNums);
-      setCandidateNums([]);
+      // Remove used numbers from available numbers
+      const newAvailableNums = availableNums.filter(
+        (n) => !newCandidateNums.includes(n)
+      );
+      
+      // Generate new stars or end the game
+      if (newAvailableNums.length > 0) {
+        // Keep trying to generate valid stars
+        let attempts = 0;
+        let newStars;
+        
+        do {
+          newStars = utils.randomSumIn(newAvailableNums, 9);
+          attempts++;
+        } while (newStars === 0 && attempts < 10);
+
+        // If we couldn't find a valid sum, pick a single available number
+        if (newStars === 0) {
+          newStars = newAvailableNums[utils.random(0, newAvailableNums.length - 1)];
+        }
+        
+        setStars(newStars);
+        setAvailableNums(newAvailableNums);
+        setCandidateNums([]);
+      } else {
+        // All numbers have been used - game won
+        setAvailableNums(newAvailableNums);
+        setCandidateNums([]);
+      }
     }
   };
 
@@ -88,28 +115,37 @@ interface GameProps {
 const Game: React.FC<GameProps> = ({ startNewGame }) => {
   const { stars, availableNums, candidateNums, secondsLeft, setGameState } = useGameState();
 
-  const candidatesAreWrong = utils.sum(candidateNums) > stars;
+  // Calculate wrong selections before rendering
+  const candidateSum = utils.sum(candidateNums);
+  const candidatesAreWrong = candidateSum > stars;
+  
   let gameStatus: "won" | "lost" | "active";
-  if (availableNums.length === 0) {
-    gameStatus = "won";
-  } else if (secondsLeft === 0) {
+  if (secondsLeft === 0) {
     gameStatus = "lost";
+  } else if (availableNums.length === 0) {
+    gameStatus = "won";
   } else {
     gameStatus = "active";
   }
 
   const numberStatus = (number: number): keyof typeof colors => {
     if (!availableNums.includes(number)) return "used";
-    if (candidateNums.includes(number)) return candidatesAreWrong ? "wrong" : "candidate";
+    if (candidateNums.includes(number)) {
+      return candidatesAreWrong ? "wrong" : "candidate";
+    }
     return "available";
   };
 
   const onNumberClick = (number: number, currentStatus: keyof typeof colors) => {
-    if (currentStatus === "used" || secondsLeft === 0) return;
+    // Prevent clicks if game is not active or number is already used
+    if (gameStatus !== "active" || currentStatus === "used") {
+      return;
+    }
 
+    // Toggle number selection
     const newCandidateNums =
       currentStatus === "available"
-        ? candidateNums.concat(number)
+        ? [...candidateNums, number].sort((a, b) => a - b) // Keep numbers sorted
         : candidateNums.filter((cn) => cn !== number);
 
     setGameState(newCandidateNums);
@@ -164,21 +200,34 @@ const utils = {
   range: (min: number, max: number): number[] => Array.from({ length: max - min + 1 }, (_, i) => min + i),
   random: (min: number, max: number): number => min + Math.floor(Math.random() * (max - min + 1)),
   randomSumIn: (arr: number[], max: number): number => {
+    if (arr.length === 0) return 0;
+    
+    // Generate all possible combinations and their sums
     const sets: number[][] = [[]];
-    const sums: number[] = [];
-
+    const sums: Set<number> = new Set();
+    
     for (const num of arr) {
-      const currentSetsLength = sets.length;
-      for (let j = 0; j < currentSetsLength; j++) {
-        const candidateSet = [...sets[j], num];
-        const candidateSum = utils.sum(candidateSet);
-        if (candidateSum <= max) {
-          sets.push(candidateSet);
-          sums.push(candidateSum);
+      const len = sets.length;
+      for (let i = 0; i < len; i++) {
+        const subset = [...sets[i], num];
+        const sum = utils.sum(subset);
+        if (sum <= max) {
+          sets.push(subset);
+          sums.add(sum);
         }
       }
     }
-    return sums.length > 0 ? sums[utils.random(0, sums.length - 1)] : 0;
+    
+    // Filter valid sums (greater than 0 and less than or equal to max)
+    const validSums = Array.from(sums).filter(sum => sum > 0 && sum <= max);
+    
+    // If no valid sums, return a single number if possible
+    if (validSums.length === 0) {
+      const singleNumbers = arr.filter(n => n <= max);
+      return singleNumbers.length > 0 ? singleNumbers[utils.random(0, singleNumbers.length - 1)] : 0;
+    }
+    
+    return validSums[utils.random(0, validSums.length - 1)];
   },
 };
 
