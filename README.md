@@ -1,4 +1,4 @@
-# react-start-match
+# react-star-match
 Star Match is a simple math skills game built with React
 
 ## Overview
