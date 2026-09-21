@@ -1,6 +1,8 @@
 # react-star-match
 Star Match is a simple math skills game built with React
 
+**Play it live:** [https://mohamadamer.com/react-star-match/](https://mohamadamer.com/react-star-match/)
+
 ## Overview
 [![Star Match - React Game - demo](./assets/StarMatch-React-Game-demo01.png)](https://www.youtube.com/watch?v=-mjcw4-qVQA)
 

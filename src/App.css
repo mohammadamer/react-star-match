@@ -2,19 +2,8 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
-  background-color: #282c34;
+  background: linear-gradient(135deg, #1f2233 0%, #2b2f4a 50%, #3a2e5c 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -22,82 +11,141 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  padding: 24px 16px;
+  box-sizing: border-box;
 }
 
-.App-link {
-  color: #61dafb;
+.title {
+  font-size: 1.5em;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #61dafb, #c86dd7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 
 .game {
   max-width: 500px;
+  width: 100%;
   margin: 0 auto;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  box-sizing: border-box;
 }
 
 .body {
   display: flex;
+  gap: 12px;
 }
 
 .help {
-  color: #666;
-  margin: 10px;
+  color: #cfd3f0;
+  font-size: 0.55em;
+  margin: 4px 0 16px;
   text-align: center;
 }
 
 .left {
   text-align: center;
   width: 50%;
-  border: thin solid #ddd;
+  border: thin solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  padding: 8px;
 }
 
 .right {
   text-align: center;
   padding: 10px;
   width: 50%;
-  border: thin solid #ddd;
+  border: thin solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
 }
 
 .star {
 	display: inline-block;
-  margin: 0 15px;
+  margin: 0 8px;
+  color: #ffd85e;
+  filter: drop-shadow(0 0 6px rgba(255, 216, 94, 0.6));
 }
 
 .star:after {
   content: "\2605";
-  font-size: 45px;
+  font-size: 40px;
 }
 
 .number {
   background-color: #eee;
-  border: thin solid #ddd;
-  width: 45px;
-  height: 45px;
-  margin: 10px;
-  font-size: 25px;
+  border: none;
+  border-radius: 10px;
+  width: 48px;
+  height: 48px;
+  margin: 6px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #222;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.number:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 .number:focus, .number:active {
   outline: none;
-  border: thin solid #ddd;
+  box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.5);
 }
 
 .timer {
-	color: #666;
-  margin-top: 3px;
-  margin-left: 3px;
+	color: #cfd3f0;
+  font-size: 0.55em;
+  margin-top: 14px;
+}
+
+.game-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .game-done .message {
-  font-size: 250%;
+  font-size: 150%;
   font-weight: bold;
-  margin: 15px;
+  margin: 0;
+}
+
+.game-done button {
+  background: linear-gradient(90deg, #61dafb, #c86dd7);
+  border: none;
+  border-radius: 8px;
+  color: #1f2233;
+  font-weight: 700;
+  padding: 10px 18px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: transform 0.12s ease;
+}
+
+.game-done button:hover {
+  transform: translateY(-2px);
 }
