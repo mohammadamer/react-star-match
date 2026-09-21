@@ -154,6 +154,7 @@ const Game: React.FC<GameProps> = ({ startNewGame }) => {
   return (
     <div className="App">
       <header className="App-header">
+        <div className="title">Star Match</div>
         <div className="game">
           <div className="help">Pick 1 or more numbers that sum to the number of stars</div>
           <div className="body">
@@ -188,10 +189,10 @@ const App: React.FC = () => {
 
 // ✅ Color Theme
 const colors = {
-  available: "lightgray",
-  used: "lightgreen",
-  wrong: "lightcoral",
-  candidate: "deepskyblue",
+  available: "#eef0f7",
+  used: "#8de3ad",
+  wrong: "#ff8a8a",
+  candidate: "#61dafb",
 };
 
 // ✅ Utility Functions
