@@ -34,13 +34,13 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_REPO_NAME: ${{ github.event.repository.name }}
-      
+          PUBLIC_URL: /${{ github.event.repository.name }}
+
       - uses: actions/configure-pages@v4
       
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: build
       
       - name: Deploy to GitHub Pages
         id: deployment
